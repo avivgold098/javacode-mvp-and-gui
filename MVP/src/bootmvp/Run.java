@@ -27,11 +27,11 @@ public class Run {
 			d = new XMLDecoder(new BufferedInputStream(new FileInputStream("Properties.xml")));
 			properties = (Properties) d.readObject();
 			d.close();
-		} catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e) {//aviv
 			e.printStackTrace();
 			return;
 		}
-		if(properties.getUi().equals("CLI"))
+		if(properties.getUi().equals("CLI"))//jjj
 		{
 			uc = new CLI(new PrintWriter(System.out), new BufferedReader(new InputStreamReader(System.in)));
 			System.out.println("You need to choose one of the following commands every time:\ndir <path>\ngenerate3dMaze <name> <y> <z> <x>\ndisplay <name>\ndisplayCrossSectionBy <X,Y or Z> <index> <name>\nsaveMaze <name> <file name>\nloadMaze <file name> <name>\nmazeSize <name>\nfileSize <name>\nsolve <name> <algorithm>\ndisplaySolution <name>\nexit");
