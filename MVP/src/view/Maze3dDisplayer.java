@@ -148,56 +148,38 @@ public class Maze3dDisplayer extends MazeDisplayer{
 
 	@Override
 	public void moveUp() {
-		int x = characterX;
-		int y = characterY+1;
-		int z = characterZ;
 		
-		moveCharacter(y, z, x);
+		moveCharacter(this.characterY+1, this.characterZ, this.characterX);
 	}
 
 	@Override
 	public void moveDown() {
-		int x = characterX;
-		int y = characterY-1;
-		int z = characterZ;
 		
-		moveCharacter(y, z, x);
+		moveCharacter(this.characterY-1, this.characterZ, this.characterX);
 	}
 
 	@Override
 	public void moveLeft() {
-		int x = characterX-1;
-		int y = characterY;
-		int z = characterZ;
 		
-		moveCharacter(y, z, x);
+		moveCharacter(this.characterY, this.characterZ, this.characterX-1);
 	}
 
 	@Override
 	public void moveRight() {
-		int x = characterX+1;
-		int y = characterY;
-		int z = characterZ;
 		
-		moveCharacter(y, z, x);
+		moveCharacter(this.characterY, this.characterZ, this.characterX+1);
 	}
 
 	@Override
 	public void moveForward() {
-		int x = characterX;
-		int y = characterY;
-		int z = characterZ-1;
 		
-		moveCharacter(y, z, x);
+		moveCharacter(this.characterY, this.characterZ-1, this.characterX);
 	}
 
 	@Override
 	public void moveBack() {
-		int x = characterX;
-		int y = characterY;
-		int z = characterZ+1;
 		
-		moveCharacter(y, z, x);
+		moveCharacter(this.characterY, this.characterZ+1, this.characterX);
 	}
 	/**
 	 * display the solution
