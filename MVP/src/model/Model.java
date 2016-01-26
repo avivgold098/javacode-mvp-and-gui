@@ -1,97 +1,92 @@
 package model;
 
-import algorithms.mazeGenerators.Position;
-import algorithms.search.Solution;
 import presenter.Properties;
+
+
+
 
 public interface Model {
 	/**
-	 * this method is write to file  all the files and and the folders into the path we sent
-	 * @param str- the path
+	 * close all the open threads and files
 	 */
-	public void dir(String str);
+	void exit();
 	/**
-	 * this method create solution  to our search problem
-	 * using BFS,Astar
-	 * @param name  the name of the name of the maze
-	 * @param algoname the name of the algo we using into the solution 
+	 * prints all the folders and files that in that path 
+	 * @param path - the path in the computer
 	 */
-	void createSolution(String name,String Algoname) ;
+	void dir(String path);
 	/**
-	 * this method write to file the maze (using to string) with the name we sent
-	 * @param str- the name of the maze we wants to get him from the hash map
-	 */
-	public void displaySolution(String name);
-	/**
-	 * this method return solution for the name of the maze we sent
-	 * @param name the name of the maze we wont for him the solution
-	 * @return the solution 
-	 */
-	Solution<Position> getSolution(String name);
-	/**
-	 * this method write to file the maze (using to string) with the name we sent
-	 * @param str- the name of the maze we wants to get him from the hash map
-	 */
-	void display(String str);
-	/** this method generate our maze with name we sent and also with the limits we sent
-	 * and put the maze into the hash map of string(key) and 3dmaze(value)
+	 * create the solution of the maze and send him to the controller
 	 * @param name - the name of the maze
-	 * @param y- the high of the maze
-	 * @param z- the num of Lines in every  floor 
-	 * @param x- the length of every floor
-	 * after the maze is created we showing from the view into file message that maze is ready
 	 */
-	void generate(String name, int y, int z, int x);
+	void solve(String name,String algorithm);
+	/**
+	 * display the solution of the maze with specific name
+	 * @param name - the name of the specific maze
+	 * @return - return the solution of the maze
+	 */
+	void displaySolution(String name);
 	
-	void getMazeByName(String name);
 	/**
-	 * this method is write to file the cross section we wants 
-	 * @param by- the section we wants
-	 * @param index- the index into the section 
-	 * @param name- the name of the maze
+	 * generate new maze with specific name, and size of x, y and z
+	 * @param name - the name of the new maze
+	 * @param x - the size of x
+	 * @param y - the size of y
+	 * @param z - the size of z
 	 */
-	void crossBy(String by, int index, String name);
+	void generate3dMaze(String name,int y, int z, int x);
+	
 	/**
-	 * this method save our maze by in compressing way
-	 * @param name- the name of the maze we want to saving him
-	 * @param filename- the name of the file we will save the compressing maze 
+	 * display the maze by his name
+	 * @param name - get name of maze
+	 * @return
 	 */
-	public void saveMaze(String Name,String FileName) ;
+	void display(String name);
+	
 	/**
-	 * this method is create maze from comperssing maze from file we sent
-	 * @param file name - the name of the file that we taking from him the compressing maze
-	 * @param name- the name of the maze we create
+	 * display the specific cross maze in one of the selection, in some index
+	 * @param by - the selection x,y or z
+	 * @param index - index in the selection
+	 * @param name - name of the maze
 	 */
-	void loadMaze(String FileName,String Name);
+	void displayCrossSectionBy(String by, int index, String name);
+	
 	/**
-	 * this method is calculate  the maze size in the memory
-	 * this method calculate the maze3d class size by using formula 
-	 * @param the name of the maze we wont to calculate from him his size
+	 * save maze that in the memory into a file
+	 * @param arg - get the parameters of the command
 	 */
-	void mazeSizeMemory(String name);
+	void saveMaze(String name,String fileName);
+	
 	/**
-	 * this method calculate the maze size into file 
-	 * @param name - the name of the maze we took from the hash map
+	 * load maze from file to the memory
+	 * @param arg - get the parameters of the command
 	 */
-	void mazeSizeFile(String name);
+	void loadMaze(String fileName,String name);
+	
 	/**
-	 * this method closed all the threads and the files 
+	 * check the size of maze in the memory and send to the controller the size
+	 * of the specific maze
+	 * @param name - get name of maze
 	 */
-	public void exit() ;
-	void save();
-	public void generate3dMaze();
-	public void setProperties(Properties properties);
-	///////////////////////////////////////////////////////////
+	void mazeSize(String name);
+	
+	/**
+	 * check the size of file and send to the controller the size
+	 * of the file that include the specific maze
+	 * @param name - get name of maze
+	 */
+	void fileSize(String name);
+	/**
+	 * generate new maze with the properties values
+	 */
+	void generate3dMaze();
+	/**
+	 * solve the maze with the algorithm we got from the properties
+	 */
+	void solve();
+	
+	void setProperties(Properties properties);
 
-	
+
 	
 }
-
-
-
-	
-
-		
-
-
-

@@ -4,11 +4,15 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
+import algorithms.mazeGenerators.Maze3d;
+import algorithms.mazeGenerators.Position;
+import algorithms.search.Solution;
 import presenter.Dir;
 import presenter.Display;
-import presenter.DisplayCrossSection;
+
 import presenter.DisplaySolution;
 import presenter.Exit;
+import presenter.FileSize;
 import presenter.Generate3dMaze;
 import presenter.LoadMaze;
 import presenter.SaveMaze;
@@ -16,13 +20,17 @@ import presenter.Solve;
 import model.Model;
 import view.View;
 
+/**
+ * Presenter class - set the update function and connect between model and view
+ *
+ */
 public class Presenter implements Observer {
 	View view;
 	Model model;
 	HashMap<String,Command> hash;
 	/**
-	 * MyController constructor - get Model and View
-	 * initialize the model and view in the CommonController
+	 * Presenter constructor - get Model and View
+	 * initialize the model and view
 	 * create the HashMap from String to Command
 	 * @param model - get object from type Model
 	 * @param view - get object from type View
@@ -42,7 +50,7 @@ public class Presenter implements Observer {
 		hash.put("saveMaze", new SaveMaze(this));
 		hash.put("loadMaze", new LoadMaze(this));
 		hash.put("mazeSize", new MazeSizeMemory(this));
-		hash.put("fileSize", new MazeFileSize(this));
+		hash.put("fileSize", new FileSize(this));
 		hash.put("exit", new Exit(this));
 		
 		view.setHashCommand(hash);
@@ -52,18 +60,22 @@ public class Presenter implements Observer {
 	 * @param -String message
 	 */	
 	public void setMessage(String message) {
-		this.view.printMessage(message);
+		this.view.displayMessage(message);
+
 	}
 	/**
 	 * get the model
 	 * @return -Model model
 	 */	
-	public Model getM(){ return model; }
+	public Model getModel(){ return model; }
 	/**
 	 * get the view
 	 * @return -View view
 	 */	
-	public View getV(){ return view; }
+	public View getView(){ return view; }
+	/**
+	 * connects between the model and the view
+	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		if(o == view)
@@ -77,22 +89,41 @@ public class Presenter implements Observer {
 					else
 						com.doCommand(command[1]);
 				else
-					view.printMessage("Error! Command not exist"); 
+					view.displayMessage("Error! Command not exist"); 
 			}
 			else if (((arg.getClass()).getName()).equals("java.lang.String")){
 				String command = (String) arg;
-				if(command.equals("exit")){
-					Command com = hash.get(command);
+				Command com = hash.get(command);
+				if(com != null)
 					com.doCommand("");
-				}				
-				else
-					view.printMessage("Error! Command not exist");	
+				else	
+					view.displayMessage("Error! Command not exist");	
 			}
+			else if (((arg.getClass()).getName()).equals("presenter.Properties")){
+				Properties properties = (Properties) arg;
+				model.setProperties(properties);
+			}
+			else
+				view.displayMessage("Error! Object not recognized");
+			
 		}
 		if(o == model)
 		{
-			String s = (String) arg;
-			view.printMessage(s);
+			if(((arg.getClass()).getName()).equals("algorithms.mazeGenerators.Maze3d"))
+			{
+				Maze3d maze = (Maze3d) arg;
+				view.displayMessage(maze);
+			}
+			else if(((arg.getClass()).getName()).equals("algorithms.search.Solution")){
+				@SuppressWarnings("unchecked")
+				Solution<Position> sol = (Solution<Position>) arg;
+				view.displayMessage(sol);
+			}
+			else
+			{
+				String s = (String) arg;
+				view.displayMessage(s);
+			}
 		}
 	}
 

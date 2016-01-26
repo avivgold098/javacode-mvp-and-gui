@@ -65,12 +65,12 @@ public class Maze3dDisplayer extends MazeDisplayer{
       */
 	public void draw(){
 		Image image = new Image(getDisplay(), "resources/walls.jpg");
-		Image charachter = new Image(getDisplay(), "resources/runne.png");
+		Image charachter = new Image(getDisplay(), "resources/runne.jpg");
 		Image endGame = new Image(getDisplay(), "resources/EndGame.jpg");
 		Image theEnd = new Image(getDisplay(), "resources/theend.jpg");
 		Image up = new Image(getDisplay(), "resources/up.png");
-		Image down = new Image(getDisplay(), "resources/down.jpg");
-		Image upAndDown = new Image(getDisplay(), "resources/upanddown.png");
+		Image down = new Image(getDisplay(), "resources/down.png");
+		Image upAndDown = new Image(getDisplay(), "resources/upanddown.jpg");
 		setBackground(new Color(null, 192, 192, 192));
 		
 		setBackgroundImage(image);
@@ -85,34 +85,34 @@ public class Maze3dDisplayer extends MazeDisplayer{
 				   int width=getSize().x;
 				   int height=getSize().y;
 
-				   int w=width/maze.getmyMaze()[0][0].length;
-				   int h=height/maze.getmyMaze()[0].length;
+				   int w=width/maze.getMaze()[0][0].length;
+				   int h=height/maze.getMaze()[0].length;
 				   if(characterX == exitX && characterZ == exitZ && characterY == exitY)
-					   e.gc.drawImage(endGame, 0, 0, 263, 192, 0, 0, getSize().x, getSize().y);
+					   e.gc.drawImage(endGame, 0, 0, 1900, 900, 0, 0, getSize().x, getSize().y);
 
 				   else
-					   for(int i=0;i<maze.getmyMaze()[0].length;i++)
-						      for(int j=0;j<maze.getmyMaze()[0][0].length;j++){
+					   for(int i=0;i<maze.getMaze()[0].length;i++)
+						      for(int j=0;j<maze.getMaze()[0][0].length;j++){
 						    	  mi.setText("floor number :"+(characterY+1));
 						          int x=j*w;
 						          int y=i*h;
-						          if(maze.getmyMaze()[characterY][i][j] == 0)
+						          if(maze.getMaze()[characterY][i][j] == 0)
 						              e.gc.fillRectangle(x,y,w,h);  
-						          if(characterY+1 < maze.getmyMaze().length)
-						        	  if(maze.getmyMaze()[characterY][i][j] == 0 && maze.getmyMaze()[characterY+1][i][j] == 0)
-						        		  e.gc.drawImage(up, 0, 0, 159,318 , x, y, w, h);
+						          if(characterY+1 < maze.getMaze().length)
+						        	  if(maze.getMaze()[characterY][i][j] == 0 && maze.getMaze()[characterY+1][i][j] == 0)
+						        		  e.gc.drawImage(up, 0, 0, 500,500 , x, y, w, h);
 						          if(characterY-1>= 0)
-						        	  	if(maze.getmyMaze()[characterY][i][j] == 0 && maze.getmyMaze()[characterY-1][i][j] == 0)
-						        	  		e.gc.drawImage(down, 0, 0, 535,386 , x, y, w, h);
-						          if(characterY +1< maze.getmyMaze().length && characterY-1 >= 0)
-						        	  if(maze.getmyMaze()[characterY][i][j] == 0 && maze.getmyMaze()[characterY+1][i][j] == 0 && maze.getmyMaze()[characterY-1][i][j] == 0)
-						        		  e.gc.drawImage(upAndDown, 0, 0, 225,225 , x, y, w, h);
+						        	  	if(maze.getMaze()[characterY][i][j] == 0 && maze.getMaze()[characterY-1][i][j] == 0)
+						        	  		e.gc.drawImage(down, 0, 0, 225,225 , x, y, w, h);
+						          if(characterY +1< maze.getMaze().length && characterY-1 >= 0)
+						        	  if(maze.getMaze()[characterY][i][j] == 0 && maze.getMaze()[characterY+1][i][j] == 0 && maze.getMaze()[characterY-1][i][j] == 0)
+						        		  e.gc.drawImage(upAndDown, 0, 0, 380,314 , x, y, w, h);
 						          if(j == characterX && i == characterZ){
-						        	  e.gc.drawImage(charachter, 0, 0, 320,320 , x, y, w, h);
+						        	  e.gc.drawImage(charachter, 0, 0, 1200,768 , x, y, w, h);
 						          }
 						          if(characterY == exitY)
 						          {
-						        	  e.gc.drawImage(theEnd, 0, 0, 316,160 , exitX*w, exitZ*h, w, h);
+						        	  e.gc.drawImage(theEnd, 0, 0, 182,276 , exitX*w, exitZ*h, w, h);
 						          }
 						      }		
 			}
@@ -129,7 +129,7 @@ public class Maze3dDisplayer extends MazeDisplayer{
 		if(characterX == exitX && characterZ == exitZ && characterY == exitY)
       	  return;
 		
-		if(y>=0 && y < maze.getmyMaze().length && z>=0 && z<maze.getmyMaze()[0].length && x>=0 && x<maze.getmyMaze()[0][0].length && maze.getmyMaze()[y][z][x] == 0){
+		if(y>=0 && y < maze.getMaze().length && z>=0 && z<maze.getMaze()[0].length && x>=0 && x<maze.getMaze()[0][0].length && maze.getMaze()[y][z][x] == 0){
 			characterX=x;
 			characterY=y;
 			characterZ=z;

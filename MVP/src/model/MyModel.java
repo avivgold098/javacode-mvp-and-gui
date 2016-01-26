@@ -1,4 +1,4 @@
- 	package model;
+package model;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,7 +10,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.Observable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,233 +18,143 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import Demo.SearchableMaze;
+import io.MyCompressorOutputStream;
+
 import algorithms.mazeGenerators.Maze3d;
-import algorithms.mazeGenerators.MyMaze3dGenerator;
 import algorithms.mazeGenerators.Position;
+import algorithms.mazeGenerators.PrimMaze3dGenerator;
 import algorithms.mazeGenerators.SimpleMaze3dGenerator;
-import algorithms.search.Astar;
+import algorithms.search.AStar;
 import algorithms.search.BFS;
 import algorithms.search.CostComparator;
 import algorithms.search.MazeAirDistance;
 import algorithms.search.MazeManhattenDistance;
 import algorithms.search.Solution;
 import algorithms.search.State;
-import io.MyCompressorOutputStream;
 import io.MyDecompressorInputStream;
 import presenter.Properties;
 
 
+/**
+ * MyModel class extends CommonModel
+ * manage the size of the model
+ */
 
 
+public class MyModel extends CommonModel {
 
-
-public class MyModel extends Observable implements Model {
 	ExecutorService threadpool;
-	 HashMap<Maze3d,String> mazeFile;
-	 HashMap<String, Solution<Position>> hashSolution;
-	 HashMap<String, Maze3d> hashMaze;
-	 int x;
-	 int y;
-	 int z;
-	 int numberOfThreads;
-	 String algorithmForSolution;
-	 String algorithmForGenerate;
-	 String name;
-	 Properties properties;
-	 public MyModel(Properties properties) {
-			super();
-			this.properties = properties;
-			setProperties(properties);
-			threadpool = Executors.newFixedThreadPool(numberOfThreads);
-			mazeFile = new HashMap<Maze3d,String>();
-			load();
-	 }
-		
-		
-
-	@Override//
-	public void dir(String str) {
-		try {
-			File file = new File(str);	
-			String[] string = file.list();
-			String list = "";
-			for(int i = 0; i <string.length; i++)
-				list += string[i] + '\n';
-			this.setChanged();
-			this.notifyObservers(list);
-		}
-		catch (NullPointerException e){
-			this.setChanged();
-			this.notifyObservers("invalid path");
-		}
-	}
-
-
-	 @Override
-	 public void createSolution(String name,String Algoname) {
-			 threadpool.submit(new Callable<Solution<Position>>() {
-					
-					@Override
-					public Solution<Position> call() throws Exception {
-						if(Algoname.equalsIgnoreCase("bfs")){
-							Maze3d maze = hashMaze.get(name);
-							if(maze != null){
-								CostComparator<Position> c1 = new CostComparator<Position>();
-								BFS<Position> bfs = new BFS<Position>(c1);
-								Solution<Position> bfsSolution = bfs.search(new SearchableMaze(maze));
-								hashSolution.put(name, bfsSolution);
-								setChanged();
-								notifyObservers("Solution for '" + name + "' is ready");
-								return bfsSolution;
-							}
-							else{
-								setChanged();
-								notifyObservers("Invalid name");
-							}
-						}
-						else if(Algoname.equalsIgnoreCase("MazeManhattanDistance")){
-							Maze3d maze = hashMaze.get(name);
-							if(maze != null){
-								CostComparator<Position> c1 = new CostComparator<Position>();
-								Astar<Position> astarManhattanDistance = new Astar<Position>(new MazeManhattenDistance(new State<Position>(maze.getEndPosition())),c1);
-								Solution<Position> astarManhattan = astarManhattanDistance.search(new SearchableMaze(maze));
-								hashSolution.put(name, astarManhattan);
-								setChanged();
-								notifyObservers("Solution for '" + name + "' is ready");
-								return astarManhattan;
-							}
-							else{
-								
-								setChanged();
-								notifyObservers("Invalid name");
-							}
-						}
-						else if(Algoname.equalsIgnoreCase("MazeAirDistance")){
-							Maze3d maze = hashMaze.get(name);
-							if(maze != null){
-								CostComparator<Position> c1 = new CostComparator<Position>();
-								Astar<Position> astarAirDistance = new Astar<Position>(new MazeAirDistance(new State<Position>(maze.getEndPosition())),c1);
-								Solution<Position> astarAir = astarAirDistance.search(new SearchableMaze(maze));
-								hashSolution.put(name, astarAir);
-								setChanged();
-								notifyObservers("Solution for '" + name + "' is ready");
-								return astarAir;
-							}
-							else{
-								setChanged();
-								notifyObservers("Invalid name");
-								
-							}
-						}
-						else{
-							setChanged();
-							notifyObservers("Invalid algorithm");
-					}
-						return null;
-					}});
-			 }
+	HashMap<Maze3d,String> mazeFile;
+	int x;
+	int y;
+	int z;
+	int numberOfThreads;
+	String algorithmForSolution;
+	String algorithmForGenerate;
+	String name;
+	Properties properties;
 	
-
-	@Override
-	public void displaySolution(String name) {
-		Solution<Position>	solution = this.getSolution(name);
-		if(solution == null)
-		{
-			this.setChanged();
-			this.notifyObservers("Not exist solution for " + name + " maze");
-		}
-		else
-		{
-			this.setChanged();
-			this.notifyObservers(solution.toString());
-		}
+	/**
+	 * Constructor that get the properties and initialize the variables
+	 * @param properties
+	 */
+	public MyModel(Properties properties) {
+		super();
+		this.properties = properties;
+		setProperties(properties);
+		threadpool = Executors.newFixedThreadPool(numberOfThreads);
+		mazeFile = new HashMap<Maze3d,String>();
+		load();
 	}
-
 	@Override
-	public Solution<Position> getSolution(String name) {
-		return hashSolution.get(name);
-	}
-
-	@Override
-	public void display(String str) {
-		Maze3d maze = hashMaze.get(str);
-		if(maze == null)
-		{
-			this.setChanged();
-			this.notifyObservers("There is no maze with the name:"+str);
-		}
-		else
-		{
-			this.setChanged();
-			this.notifyObservers(maze.toString());
-		}
-	}
-
-	@Override
-	public void generate(String name, int y, int z, int x) {
-		if(hashMaze.containsKey(name))
-		{
+	public void generate3dMaze(String name,int y, int z, int x) {
+		if(hm.containsKey(name) == true)
+		{			
 			setChanged();
-			notifyObservers(hashMaze.get(name));
+			notifyObservers(hm.get(name));
 			setChanged();
 			notifyObservers("Maze '"+name+"' is already exist");
 			return;
 		}
-		threadpool.submit(new Callable<Maze3d>() {
+		this.name = name;
+		Callable<Maze3d> callable = new Callable<Maze3d>() {
 
 			@Override
 			public Maze3d call() throws Exception {
-				Maze3d m = new MyMaze3dGenerator().generate(y, z, x);
+				Maze3d maze = new PrimMaze3dGenerator().generate(y, z, x);
+				hm.put(name,maze);
 				setChanged();
-				notifyObservers(hashMaze.get(name));
-				hashMaze.put(name,m);
-				setChanged();
-				notifyObservers("Maze '"+name+"' is ready");
-				return m;
-				
+				notifyObservers(maze);
+				return maze;
 			}
-		});
+		};
 		
+		threadpool.submit(callable);	
+		setChanged();
+		notifyObservers("Maze '" + name + "' is ready");
 	}
+	
 	@Override
 	public void generate3dMaze() {
-		if(hashMaze.containsKey(name))
+		if(hm.containsKey(name) == true)
 		{
 			setChanged();
-			notifyObservers(hashMaze.get(name));
+			notifyObservers(hm.get(name));
 			setChanged();
 			notifyObservers("Maze '"+name+"' is already exist");
 			return;
 		}
-		this.threadpool.submit(new Callable<Maze3d>() {
+		Callable<Maze3d> callable = new Callable<Maze3d>(){
 
 			@Override
 			public Maze3d call() throws Exception {
 				Maze3d maze;
 				if(algorithmForGenerate.equals("MyMaze3dGenerator"))
-					maze = new MyMaze3dGenerator().generate(y, z, x);
+					maze = new PrimMaze3dGenerator().generate(y, z, x);
 				else
 					maze = new SimpleMaze3dGenerator().generate(y, z, x);
-				hashMaze.put(name,maze);
+				hm.put(name,maze);
 				setChanged();
 				notifyObservers(maze);
-				setChanged();
-				notifyObservers("Maze '"+name+"' is already exist");
 				return maze;
 			}
-		});
+		};
+		threadpool.submit(callable);	
+		setChanged();
+		notifyObservers("Maze '" + name + "' is ready");
+	}
+	
+	@Override
+	public void display(String name){
+		Maze3d maze = null;
+		if(name.length() == 0)
+			maze = hm.get(this.name);
+		else
+			maze = hm.get(name);
+		if(maze == null){
+			setChanged();
+			notifyObservers("Not exist maze by this name: '" + name+"'");
+		}
+		else{
+			setChanged();
+			notifyObservers(maze.toString()); 
+		}
 	}
 
 
 	@Override
-	public void crossBy(String by, int index, String name) {
-		Maze3d maze = hashMaze.get(name);
+	public void displayCrossSectionBy(String by, int index, String name) {
+		Maze3d maze = null;
+		if(name.length() == 0)
+			maze = hm.get(this.name);
+		else
+			maze = hm.get(name);
 		
 		String strMaze ="";
 		int[][] maze2d = null;
 		if(maze == null){
-			this.setChanged();
-			this.notifyObservers("Maze not exist");
+			setChanged();
+			notifyObservers("Maze not exist");
 			return;
 		}
 		
@@ -272,14 +181,14 @@ public class MyModel extends Observable implements Model {
 				maze2d = maze.getCrossSectionByZ(index);
 				break;
 			default:
-				this.setChanged();
-				this.notifyObservers("invalid input");
+				setChanged();
+				notifyObservers("Invalid cross section");	
 				return;
 			}
 		}
 		catch(IndexOutOfBoundsException e){
-			this.setChanged();
-			this.notifyObservers("invalid input");
+			setChanged();
+			notifyObservers("Invalid index");	
 			return;
 		}
 		
@@ -290,190 +199,221 @@ public class MyModel extends Observable implements Model {
 				strMaze += String.valueOf(maze2d[i][j]) + " ";
 			strMaze += '\n';
 		}
-		
-		this.setChanged();
-		this.notifyObservers(strMaze);
+		setChanged();
+		notifyObservers(strMaze);	
 	}
 
 	@Override
-	public void saveMaze(String Name, String FileName) {
-		Maze3d maze = hashMaze.get(Name);
+	public void saveMaze(String name,String fileName) {
+		Maze3d maze = hm.get(name);
 		if(maze == null){
-			this.setChanged();
-			this.notifyObservers("Maze " + Name + " not exist");
+			setChanged();
+			notifyObservers("Maze '" + name + "' not exist");
 			return;
 		}
 		
 		OutputStream out = null;
 		try {
-			out = new MyCompressorOutputStream(new FileOutputStream(FileName + ".maz"));
+			out = new MyCompressorOutputStream(new FileOutputStream(fileName + ".maz"));
 			out.write(maze.toByteArray());	
-			mazeFile.put(maze, FileName + ".maz");
+			mazeFile.put(maze, fileName + ".maz");
 		} catch (FileNotFoundException e) {
-			this.setChanged();
-			this.notifyObservers(e.getMessage());
+			setChanged();
+			notifyObservers(e.getMessage());
 			return;
 		} catch (IOException e) {
-			this.setChanged();
-			this.notifyObservers(e.getMessage());
+			setChanged();
+			notifyObservers(e.getMessage());
 			return;
 		}
 		finally{
 			try {
 				out.flush();
 			} catch (IOException e) {
-				this.setChanged();
-				this.notifyObservers(e.getMessage());
+				setChanged();
+				notifyObservers(e.getMessage());
 			}
 			try {
 				out.close();
 			} catch (IOException e) {
-				this.setChanged();
-				this.notifyObservers(e.getMessage());
+				setChanged();
+				notifyObservers(e.getMessage());
 			}
 		}
 		
-		
-		this.setChanged();
-		this.notifyObservers("File "+FileName+" save");
-		
+		setChanged();
+		notifyObservers("The maze '"+name+"' was saved successfully in the file '" + fileName + "'");
 	}
 
 	@Override
-	public void loadMaze(String FileName, String Name) {
-		 Maze3d loaded = null;
-			boolean isOpen = false;
-				
-				try{
-					@SuppressWarnings("unused")
-					File file = new File(FileName + ".maz");
-				}
-				catch(NullPointerException e){
-					this.setChanged();
-					this.notifyObservers("File not exist");
-					return;
-				}
-					
-				InputStream in=null;
-				try {
-					in = new MyDecompressorInputStream(new FileInputStream(FileName+ ".maz"));
-					isOpen = true;
-					byte b[] = new byte[4096];
-					in.read(b);
-					loaded = new Maze3d(b);
-				}
-				catch (FileNotFoundException e) {
-					this.setChanged();
-					this.notifyObservers(e.getMessage());
-					return;
-				}
-				catch (IOException e) {
-					this.setChanged();
-					this.notifyObservers(e.getMessage());
-				}
-				catch(NullPointerException e)
-				{
-					this.setChanged();
-					this.notifyObservers(e.getMessage());
-					return;
-				}
-				finally
-				{
-					try {
-						if(isOpen)
-							in.close();
-					} catch (IOException e) 
-					{
-						this.setChanged();
-						this.notifyObservers("Maze "+ Name+" was unsuccessfully");
-					}
-				}
-					
-				hashMaze.put(Name, loaded);
-				mazeFile.put(loaded, FileName + ".maz");
-				this.setChanged();
-				this.notifyObservers("Maze " + Name + " loaded successfully");
-	}
-
-	@Override
-	public void mazeSizeMemory(String name) {
-		Maze3d maze = hashMaze.get(name);
-		if(maze == null){
-			this.setChanged();
-			this.notifyObservers("Maze " + name + " not exist");
+	public void loadMaze(String fileName,String name) {
+		Maze3d loaded = null;
+		boolean isOpen = false;
+		
+		try{
+			@SuppressWarnings("unused")
+			File file = new File(fileName + ".maz");
+		}
+		catch(NullPointerException e){
+			setChanged();
+			notifyObservers("File not exist");
 			return;
 		}
-		
-		int size = 4*((maze.getmyMaze()[0][0].length*maze.getmyMaze()[0].length*maze.getmyMaze().length)  + 3 + 3);
-		this.setChanged();
-		this.notifyObservers("Maze " + name + " size in memory: " + size);
-	}
-
-	@Override
-	public void mazeSizeFile(String name) {
-		try{
-			String fielPath = mazeFile.get(hashMaze.get(name));
-			if(fielPath == null){
-				this.setChanged();
-				this.notifyObservers("Maze " + name + " not exist in any file");
-				return;
-			}
-			File maze = new File(fielPath);
-			this.setChanged();
-			this.notifyObservers("Maze file " + name + " size is: " + maze.length());
 			
+		InputStream in=null;
+		try {
+			in = new MyDecompressorInputStream(new FileInputStream(fileName + ".maz"));
+			isOpen = true;
+			byte b[] = new byte[4096];
+			in.read(b);
+			loaded = new Maze3d(b);
 		}
-		catch (NullPointerException e){
-			this.setChanged();
-			this.notifyObservers("Not exist " + name + " file");
-			}
-	}
-
-	@Override
-	public void exit() {
-		threadpool.shutdown();
-		try {
-			while(!(threadpool.awaitTermination(10, TimeUnit.SECONDS)));
-		} catch (InterruptedException e) {
-			this.setChanged();
-			this.notifyObservers(e.getMessage());
-			}
-		
-	}
-	@Override
-	public void save() {
-		FileOutputStream fileSolutions;
-		GZIPOutputStream GZIPOutput;
-		ObjectOutputStream out;
-		try {
-			fileSolutions = new FileOutputStream("solution.zip");
-			GZIPOutput = new GZIPOutputStream(fileSolutions);
-			out = new ObjectOutputStream(GZIPOutput);
-			out.writeObject(hashMaze);
-			out.writeObject(hashSolution);
-			out.writeObject(mazeFile);
-			out.flush();
-			out.close();
-		} catch (FileNotFoundException e) {
+		catch (FileNotFoundException e) {
 			setChanged();
 			notifyObservers(e.getMessage());
+			return;
 		}
 		catch (IOException e) {
 			setChanged();
 			notifyObservers(e.getMessage());
-		}		
+			return;
+		}
+		catch(NullPointerException e)
+		{
+			setChanged();
+			notifyObservers(e.getMessage());
+			return;
+		}
+		finally
+		{
+			try {
+				if(isOpen)
+					in.close();
+			} catch (IOException e) 
+			{
+				setChanged();
+				notifyObservers("Maze '"+ name+"' was unsuccessfully");
+			}
+		}
+			
+		hm.put(name, loaded);
+		mazeFile.put(loaded, fileName + ".maz");
+		setChanged();
+		notifyObservers("The maze '" + name + "' has loaded successfully");
 	}
+	
+	@Override
+	public void mazeSize(String name) {
+		Maze3d maze = hm.get(name);
+		if(maze == null){
+			setChanged();
+			notifyObservers("Maze " + name + " not exist");
+			return;
+		}
+		
+		int size = 4*(maze.getMaze().length * maze.getMaze()[0].length *maze.getMaze()[0][0].length + 3 + 3);
+		setChanged();
+		notifyObservers("The maze size of '" + name + "' in memory: " + size +" bytes");		
+	}
+
+
+	@Override
+	public void fileSize(String name) {
+		try{
+			String filePath = mazeFile.get(hm.get(name));
+			if(filePath == null){
+				setChanged();
+				notifyObservers("Maze '" + name + "' not exist in any file");
+				return;
+			}
+			File maze = new File(filePath);
+			setChanged();
+			notifyObservers("The file size of maze '" + name + "' is: " + maze.length()+" bytes");
+		}
+		catch (NullPointerException e){
+			setChanged();
+			notifyObservers("Not exist '" + name + "' file");
+		}
+	}
+
+	@Override
+	public void exit(){
+		save();
+		threadpool.shutdown();
+		try {
+			while(!(threadpool.awaitTermination(10, TimeUnit.SECONDS)));
+		} catch (InterruptedException e) {
+			setChanged();
+			notifyObservers(e.getMessage());
+		}
+	}
+	/**
+	 * save the hash maps to the zip
+	 */
+	public void save() {
+		ObjectOutputStream out = null;
+		try{
+			out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream("Maze3dMap.zip")));
+			out.writeObject(hm);
+			out.flush();
+		} catch (FileNotFoundException e) {
+			setChanged();
+			notifyObservers(e.getMessage());
+		}
+		catch(IOException e){
+			setChanged();
+			notifyObservers(e.getMessage());
+		} finally{
+			try{
+				out.close();
+			}catch(IOException e)
+			{
+				setChanged();
+				notifyObservers(e.getMessage());
+			}
+		}
+	}
+
+	/**
+	 * load the hash maps to the zip
+	 */
 	@SuppressWarnings("unchecked")
 	public void load() {
-		FileInputStream fileSolutions;
+		ObjectInputStream in = null;
+		try{
+			in = new ObjectInputStream(new GZIPInputStream(new FileInputStream("Maze3dMap.zip")));
+			hm = (HashMap<String, Maze3d>) in.readObject();
+		} catch (FileNotFoundException e) {
+			setChanged();
+			notifyObservers(e.getMessage());
+		}
+		catch(IOException e){
+			setChanged();
+			notifyObservers(e.getMessage());
+		}catch(ClassNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+			finally{
+		
+			try{
+				if(in!= null)
+					in.close();
+			}catch(IOException e)
+			{
+				setChanged();
+				notifyObservers(e.getMessage());
+			}
+		}
+		/*FileInputStream fileSolutions;
 		GZIPInputStream GZIPInput;
 		ObjectInputStream in;
 		try {
 			fileSolutions = new FileInputStream("solution.zip");
 			GZIPInput = new GZIPInputStream(fileSolutions);
 			in = new ObjectInputStream(GZIPInput);
-			hashMaze = (HashMap<String, Maze3d>) in.readObject();
-			hashSolution = (HashMap<String, Solution<Position>>) in.readObject();
+			hm = (HashMap<String, Maze3d>) in.readObject();
+			hashSolution = (HashMap<Maze3d, Solution<Position>>) in.readObject();
 			mazeFile = (HashMap<Maze3d, String>) in.readObject();
 			in.close();
 		} catch (FileNotFoundException e) {
@@ -487,159 +427,192 @@ public class MyModel extends Observable implements Model {
 		catch (ClassNotFoundException e) {
 		setChanged();
 		notifyObservers(e.toString());
-		}
+		}*/
 	}
-	@Override
-	public void setProperties(Properties properties) {
-		this.properties = properties;
-		setChanged();
-		setName(properties.getName());		
-		setX(properties.getXSize());
-		setY(properties.getYSize());
-		setZ(properties.getZSize());
-		setAlgorithmForGenerate(properties.getAlgorithemForCreate());
-		setAlgorithmForSolution(properties.getAlgorithemForSolution());
-		setNumberOfThreads(properties.getNumberOfThreads());
-		threadpool = Executors.newFixedThreadPool(numberOfThreads);
-		notifyObservers("The properties is uploaded successfully");
-	}
-	
-	@Override
-	public void getMazeByName(String name) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
 	/**
-	 * @return the x
-	 */
-	public int getX() {
-		return x;
-	}
-
-
-
-	/**
-	 * @return the y
-	 */
-	public int getY() {
-		return y;
-	}
-
-
-
-	/**
-	 * @return the z
-	 */
-	public int getZ() {
-		return z;
-	}
-
-
-
-	/**
-	 * @return the numberOfThreads
-	 */
-	public int getNumberOfThreads() {
-		return numberOfThreads;
-	}
-
-
-
-	/**
-	 * @return the algorithmForSolution
-	 */
-	public String getAlgorithmForSolution() {
-		return algorithmForSolution;
-	}
-
-
-
-	/**
-	 * @return the algorithmForGenerate
-	 */
-	public String getAlgorithmForGenerate() {
-		return algorithmForGenerate;
-	}
-
-
-
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-
-
-	/**
-	 * @param x the x to set
+	 * set the x from by the properties
+	 * @param x
 	 */
 	public void setX(int x) {
 		this.x = x;
 	}
 
-
-
 	/**
-	 * @param y the y to set
+	 * set the y from by the properties
+	 * @param y
 	 */
 	public void setY(int y) {
 		this.y = y;
 	}
-
-
-
 	/**
-	 * @param z the z to set
+	 * set the z from by the properties
+	 * @param z
 	 */
 	public void setZ(int z) {
 		this.z = z;
 	}
-
-
+	/**
+	 * set the algorithm for solution by the properties
+	 * @param algorithmForSolution
+	 */
+	public void setAlgorithmForSolution(String algorithmForSolution) {
+		this.algorithmForSolution = algorithmForSolution;
+	}
+	/**
+	 * set the algorithm for generate by the properties
+	 * @param algorithmForGenerate
+	 */
+	public void setAlgorithmForGenerate(String algorithmForGenerate) {
+		this.algorithmForGenerate = algorithmForGenerate;
+	}
+	/**
+	 * get the number of the threads from the properties
+	 * @return
+	 */
+	public int getNumberOfThreads() {
+		return numberOfThreads;
+	}
 
 	/**
-	 * @param numberOfThreads the numberOfThreads to set
+	 * set the number of the threads by the properties
+	 * @param numberOfThreads
 	 */
 	public void setNumberOfThreads(int numberOfThreads) {
 		this.numberOfThreads = numberOfThreads;
 	}
 
-
-
 	/**
-	 * @param algorithmForSolution the algorithmForSolution to set
+	 * get the name of the maze from the properties
+	 * @return
 	 */
-	public void setAlgorithmForSolution(String algorithmForSolution) {
-		this.algorithmForSolution = algorithmForSolution;
+	public String getName() {
+		return name;
 	}
-
-
-
+	
 	/**
-	 * @param algorithmForGenerate the algorithmForGenerate to set
-	 */
-	public void setAlgorithmForGenerate(String algorithmForGenerate) {
-		this.algorithmForGenerate = algorithmForGenerate;
-	}
-
-
-
-	/**
-	 * @param name the name to set
+	 * set the name from the properties
+	 * @param name
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
-	public void solve() {
-		if(hashSolution.containsKey(hashMaze.get(name)) == true)
+	/**
+	 * set the variables from the properties
+	 * @param properties
+	 */
+	@Override
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+		setChanged();
+		setName(properties.getName());		
+		setX(properties.getX());
+		setY(properties.getY());
+		setZ(properties.getZ());
+		setAlgorithmForGenerate(properties.getAlgorithemForGenerate());
+		setAlgorithmForSolution(properties.getAlgorithemForSolution());
+		setNumberOfThreads(properties.getNumberOfThreads());
+		threadpool = Executors.newFixedThreadPool(numberOfThreads);
+		notifyObservers("The properties is uploaded successfully");
+	}
+	@Override
+	public void solve(String name, String algorithm) {
+		if(hashSolution.containsKey(hm.get(name)) == true)
 		{
 			setChanged();
-			notifyObservers(hashSolution.get(hashMaze.get(name)));
+			notifyObservers("Solution for '" + name + "' is ready");
+			setChanged();
+			notifyObservers(hashSolution.get(hm.get(name)));
+			return;
+		}	
+		Callable<Solution<Position>> callable = new Callable<Solution<Position>>() {
+			@Override
+			public Solution<Position> call() throws Exception {
+				if(algorithm.equalsIgnoreCase("bfs")){
+					Maze3d maze = hm.get(name);
+					if(maze != null){
+						CostComparator<Position> c = new CostComparator<Position>();
+						BFS<Position> bfs = new BFS<Position>(c);
+						Solution<Position> bfsSolution = bfs.search(new SearchableMaze(maze));
+						hashSolution.put(maze, bfsSolution);
+						setChanged();
+						notifyObservers("Solution for '" + name + "' is ready");
+						setChanged();
+						notifyObservers(bfsSolution);
+					}
+					else{
+						setChanged();
+						notifyObservers("Invalid name");
+					}
+				}
+				else if(algorithm.equalsIgnoreCase("MazeManhattanDistance")){
+					Maze3d maze = hm.get(name);
+					if(maze != null){
+						CostComparator<Position> c = new CostComparator<Position>();
+						AStar<Position> astarManhattanDistance = new AStar<Position>(new MazeManhattenDistance(new State<Position>(maze.getGoalPosition())),c);
+						Solution<Position> astarManhattan = astarManhattanDistance.search(new SearchableMaze(maze));
+						hashSolution.put(maze, astarManhattan);
+						setChanged();
+						notifyObservers("Solution for '" + name + "' is ready");
+						setChanged();
+						notifyObservers(astarManhattan);
+					}
+					else{
+						setChanged();
+						notifyObservers("Invalid name");
+					}
+				}
+				else if(algorithm.equalsIgnoreCase("MazeAirDistance")){
+					Maze3d maze = hm.get(name);
+					if(maze != null){
+						CostComparator<Position> c = new CostComparator<Position>();
+						AStar<Position> astarAirDistance = new AStar<Position>(new MazeAirDistance(new State<Position>(maze.getGoalPosition())),c);
+						Solution<Position> astarAir = astarAirDistance.search(new SearchableMaze(maze));
+						hashSolution.put(maze, astarAir);
+						setChanged();
+						notifyObservers("Solution for '" + name + "' is ready");
+						setChanged();
+						notifyObservers(astarAir);
+					}
+					else{
+						setChanged();
+						notifyObservers("Invalid name");
+					}
+				}
+				else
+				{
+					setChanged();
+					notifyObservers("Invalid algorithm");
+				}
+				return hashSolution.get(hm.get(name));
+			}
+		};
+		threadpool.submit(callable);
+	}
+	@Override
+	public void dir(String path)
+	{
+		try {
+			File f = new File(path);	
+			String[] string = f.list(); 
+			String listPath = "";
+			
+			for(int i = 0; i <string.length; i++)
+				listPath += string[i] + '\n';
+			setChanged();
+			notifyObservers(listPath);
+		}
+		catch (NullPointerException e){
+			setChanged();
+			notifyObservers("Invalid path");
+		}
+		
+	}
+	@Override
+	public void solve() {
+		if(hashSolution.containsKey(hm.get(name)) == true)
+		{
+			setChanged();
+			notifyObservers(hashSolution.get(hm.get(name)));
 			setChanged();
 			notifyObservers("Solution for '" + name + "' is ready");
 			return;
@@ -648,7 +621,7 @@ public class MyModel extends Observable implements Model {
 			@Override
 			public Solution<Position> call() throws Exception {
 				if(algorithmForSolution.equalsIgnoreCase("bfs")){
-					Maze3d maze = hashMaze.get(name);
+					Maze3d maze = hm.get(name);
 					if(maze != null){
 						CostComparator<Position> c = new CostComparator<Position>();
 						BFS<Position> bfs = new BFS<Position>(c);
@@ -663,10 +636,10 @@ public class MyModel extends Observable implements Model {
 					}
 				}
 				else if(algorithmForSolution.equalsIgnoreCase("MazeManhattanDistance")){
-					Maze3d maze = hashMaze.get(name);
+					Maze3d maze = hm.get(name);
 					if(maze != null){
 						CostComparator<Position> c = new CostComparator<Position>();
-						Astar<Position> astarManhattanDistance = new Astar<Position>(new MazeManhattenDistance(new State<Position>(maze.getGoalPosition())),c);
+						AStar<Position> astarManhattanDistance = new AStar<Position>(new MazeManhattenDistance(new State<Position>(maze.getGoalPosition())),c);
 						Solution<Position> astarManhattan = astarManhattanDistance.search(new SearchableMaze(maze));
 						hashSolution.put(maze, astarManhattan);
 						setChanged();
@@ -678,10 +651,10 @@ public class MyModel extends Observable implements Model {
 					}
 				}
 				else if(algorithmForSolution.equalsIgnoreCase("MazeAirDistance")){
-					Maze3d maze = hashMaze.get(name);
+					Maze3d maze = hm.get(name);
 					if(maze != null){
 						CostComparator<Position> c = new CostComparator<Position>();
-						Astar<Position> astarAirDistance = new Astar<Position>(new MazeAirDistance(new State<Position>(maze.getGoalPosition())),c);
+						AStar<Position> astarAirDistance = new AStar<Position>(new MazeAirDistance(new State<Position>(maze.getGoalPosition())),c);
 						Solution<Position> astarAir = astarAirDistance.search(new SearchableMaze(maze));
 						hashSolution.put(maze, astarAir);
 						setChanged();
@@ -697,7 +670,7 @@ public class MyModel extends Observable implements Model {
 					setChanged();
 					notifyObservers("Invalid algorithm");
 				}
-				return hashSolution.get(hashMaze.get(name));
+				return hashSolution.get(hm.get(name));
 			}
 		};
 		threadpool.submit(callable);
@@ -706,4 +679,4 @@ public class MyModel extends Observable implements Model {
 		
 	}
 
-	}
+}

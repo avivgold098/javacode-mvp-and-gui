@@ -13,11 +13,11 @@ import org.eclipse.swt.widgets.Text;
 
 public class GenerateWindow extends Dialog{
 	Shell win;
-	MazeWindow gui;
+	GUI gui;
 	/**
 	 * constructor of GeneratWindow 
 	 */
-	public GenerateWindow(MazeWindow gui, Shell shell, int width, int height) {
+	public GenerateWindow(GUI gui, Shell shell, int width, int height) {
 		super(shell);
 		win = new Shell();
 		win.setSize(width, height);

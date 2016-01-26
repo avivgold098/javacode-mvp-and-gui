@@ -1,10 +1,17 @@
 package presenter;
-
-public class Solve extends CommonCommand {
-
+/**
+ * this class extends CommonCommand
+ * give us a solve of the maze
+ *
+ */
+public class Solve extends CommonCommand{
+	/**
+	 * constructor
+	 * call super with the Controller that it get
+	 * @param controller
+	 */
 	public Solve(Presenter presenter) {
 		super(presenter);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -14,12 +21,12 @@ public class Solve extends CommonCommand {
 		if(parm.length != 2)
 		{
 			if(parm.length == 1)
-				pr.getM().solve();
+				presenter.getModel().solve();
 			else
-				pr.setMessage("Invalid Command");
+				presenter.setMessage("Invalid Command");
 		}
 		else
-			pr.getM().solve(parm[0],parm[1]);
+			presenter.getModel().solve(parm[0],parm[1]);
 	}
 
 }

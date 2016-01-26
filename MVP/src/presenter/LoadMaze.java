@@ -1,20 +1,28 @@
 package presenter;
-
-public class LoadMaze extends CommonCommand {
-
+/**
+ * this class extends from CommonCommand 
+ * load the maze from  the file 
+ *
+ */
+public class LoadMaze extends CommonCommand{
+	/**
+	 * constructor
+	 * call super with the Controller that it get
+	 * @param controller
+	 */
 	public LoadMaze(Presenter presenter) {
 		super(presenter);
-		// TODO Auto-generated constructor stub
 	}
+
+
 
 	@Override
 	public void doCommand(String str) {
 		String[] parm = str.split(" ");
-		if(parm.length!=2)
-			pr.getV().printMessage("Invalid commnad");		
-		else//agss//
-			pr.getM().loadMaze(parm[0],parm[1]);
-
+		if(parm.length != 2)
+			presenter.setMessage("Invalid Command");
+		else
+			presenter.getModel().loadMaze(parm[0], parm[1]);
 	}
 
 }

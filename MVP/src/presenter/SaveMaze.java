@@ -1,21 +1,28 @@
 package presenter;
-
-public class SaveMaze extends CommonCommand {
-
+/**
+ * this class extends CommonCommand
+ * save maze in the file you want
+ *
+ */
+public class SaveMaze extends CommonCommand{
+	/**
+	 * constructor
+	 * call super with the Controller that it get
+	 * @param controller
+	 */
 	public SaveMaze(Presenter presenter) {
 		super(presenter);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void doCommand(String str) {
 		String[] parm = str.split(" ");
-		if(parm.length != 2){
-			pr.getV().printMessage("Invalid command");			
-			return;
-		}
-		pr.getM().saveMaze(parm[0], parm[1]);
-
+		if(parm.length != 2)
+			presenter.setMessage("Invalid Command");
+		else
+			presenter.getModel().saveMaze(parm[0], parm[1]);
+		
+		
 	}
-
+	
 }

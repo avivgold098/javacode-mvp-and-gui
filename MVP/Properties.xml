@@ -13,7 +13,7 @@
    <string>BFS</string>
   </void>
  <void property="algorithemForGenerate">
-   <string>PrimMaze3dGenerate</string>
+   <string>MyMaze3dGenerator</string>
   </void> <void property="name">
    <string>MyMaze</string>
   </void>

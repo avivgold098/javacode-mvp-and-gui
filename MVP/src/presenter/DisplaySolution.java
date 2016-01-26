@@ -1,16 +1,21 @@
 package presenter;
 
-public class DisplaySolution extends CommonCommand {
-
+/**
+ * extends the CommonComand
+ * manage the display of the solution 
+ */
+public class DisplaySolution extends CommonCommand{
+	/**
+	 * DisplaySolution constructor
+	 * @param controller - set the controller to work with him
+	 */
 	public DisplaySolution(Presenter presenter) {
 		super(presenter);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void doCommand(String str) {
-		pr.getM().displaySolution(str);
-
+		presenter.getModel().displaySolution(str);
 	}
 
 }

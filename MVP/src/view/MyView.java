@@ -1,42 +1,44 @@
 package view;
 
-import java.io.BufferedReader;
-import java.io.PrintWriter;
+
 import java.util.HashMap;
 import java.util.Observable;
 
+import algorithms.mazeGenerators.Maze3d;
+import algorithms.mazeGenerators.Position;
+import algorithms.search.Solution;
 import presenter.Command;
 import presenter.Properties;
-
-public class MyView extends Observable implements View {
-	CLI cli;
+/**
+ * the implementation of view
+ *
+ */
+public class MyView extends Observable implements View{
+	UserChoice uc;
 	HashMap<String,Command> hc;
-	BufferedReader in;
-	PrintWriter out;
-	UserInterface uc;
-	public MyView(BufferedReader in,PrintWriter out)
-	{
-		this.in = in;
-		this.out = out;
-		cli = new CLI(out,in);
-		cli.setView(this);
-	}
-	@Override
-	public void printMessage(String str) {
-		cli.printMessage(str);
-	}
-	public MyView(UserInterface uc)
+
+	/**
+	 * Constructor of MyView , set the view of the user choice
+	 */
+	public MyView(UserChoice uc)
 	{
 		this.uc = uc;
 		uc.setView(this);
 	}
 	@Override
 	public void start() {
-		cli.start();
+		uc.start();
 	}
+
+	@Override
+	public void displayMessage(String message) {
+		uc.setMessage(message);
+		
+	}
+
 	@Override
 	public void setHashCommand(HashMap<String, Command> hc) {
-		cli.setHashCommand(hc);
+		uc.setHashCommand(hc);
 		this.hc = hc;
 	}
 	@Override
@@ -56,8 +58,14 @@ public class MyView extends Observable implements View {
 		setChanged();
 		notifyObservers(properties);
 	}
-
-
+	@Override
+	public void displayMessage(Maze3d maze) {
+		uc.setMessage(maze);
+		
+	}
+	@Override
+	public void displayMessage(Solution<Position> sol) {
+		uc.setMessage(sol);
+		
+	}
 }
-
-	

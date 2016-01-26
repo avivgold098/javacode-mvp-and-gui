@@ -1,11 +1,19 @@
 package presenter;
 
-
-public abstract class CommonCommand implements Command {
-
-	Presenter pr;
-public 	CommonCommand(Presenter presenter){this.pr=presenter;}
+/**
+ * Abstract Class implements Command that all the specific command extends it 
+ *
+ */
+public abstract class CommonCommand implements Command{
+	Presenter presenter;
+	/**
+	 * constructor
+	 * @param controller copy the controller
+	 */
+	public CommonCommand(Presenter presenter)
+	{
+		this.presenter = presenter;
+	}
 	@Override
-	public abstract void doCommand(String str) ;
-
+	public abstract void doCommand(String str);
 }

@@ -1,16 +1,21 @@
 package presenter;
-
+/**
+ * this class extends CommonCommand
+ * Get the maze size (byte)
+ *
+ */
 public class MazeSizeMemory extends CommonCommand {
-
+	/**
+	 * MazeSize constructor
+	 * @param controller - get the Controller to work with him
+	 */
 	public MazeSizeMemory(Presenter presenter) {
 		super(presenter);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void doCommand(String str) {
-		pr.getM().mazeSizeMemory(str);
-
+		presenter.getModel().mazeSize(str);
 	}
 
 }

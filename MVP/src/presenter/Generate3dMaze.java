@@ -1,12 +1,18 @@
 package presenter;
-
+/**
+ * this class extends from CommonCommand 
+ * Generate the 3d maze  
+ *
+ */
 public class Generate3dMaze extends CommonCommand {
-
+/**
+ * constructor
+ * call super with the Controller that it get
+ * @param controller
+ */
 	public Generate3dMaze(Presenter presenter) {
 		super(presenter);
-		// TODO Auto-generated constructor stub
 	}
-
 	@Override
 	public void doCommand(String str) {
 		String[] parm = str.split(" ");
@@ -14,9 +20,9 @@ public class Generate3dMaze extends CommonCommand {
 		if(parm.length != 4)
 		{
 			if(parm.length == 1)
-				pr.getM().generate3dMaze();
+				presenter.getModel().generate3dMaze();
 			else
-				pr.setMessage("Invalid Command");
+				presenter.setMessage("Invalid Command");
 		}
 		else{
 			int x = 0,y = 0,z = 0;
@@ -26,12 +32,11 @@ public class Generate3dMaze extends CommonCommand {
 				x = Integer.parseInt(parm[3]);
 			}
 			catch (NumberFormatException e){
-				pr.setMessage("Invalid Command");
+				presenter.setMessage("Invalid Command");
 			}
 			
-			pr.getM().generate(parm[0],y, z, x);
+			presenter.getModel().generate3dMaze(parm[0],y, z, x);
 		}
 	}
-
 
 }

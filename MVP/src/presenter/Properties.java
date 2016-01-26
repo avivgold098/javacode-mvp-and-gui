@@ -2,154 +2,92 @@ package presenter;
 
 import java.io.Serializable;
 
-public class Properties implements Serializable {
+public class Properties implements Serializable{
 	
 	private static final long serialVersionUID = 42L;
-	int xSize;
-	int ySize;
-	int zSize;
+	int x;
+	int y;
+	int z;
 	int numberOfThreads;
 	String name;
-	String algorithemForSolution;
-	String algorithemForCreate;
-	String ui;
-	
-/**
- * Constructor of Properties
- */
+	String algorithmForSolution;
+	String algorithmForGenerate;
+	String uc;
+
 	public Properties() {
-		this.xSize = 9;
-		this.ySize = 9;
-		this.zSize = 9;
+		this.x = 6;
+		this.y = 6;
+		this.z = 6;
 		this.numberOfThreads = 10;
-		this.algorithemForSolution = "A* Air Distance";
-		this.algorithemForCreate = "My Maze generator";
-		this.ui = "CLI";
-		this.name = "DefualtName";
-	}
-	public String getAlgorithemForCreate() {
-		return algorithemForCreate;
+		this.algorithmForSolution = "BFS";
+		this.algorithmForGenerate = "MyMaze3dGenerator";
+		this.name = "Maze1";
+		this.uc = "GUI";
 	}
 
-	/**
-	 * set the algorithm of create
-	 * @param algorithemForCreate -String name
-	 */
-
-	public void setAlgorithemForCreate(String algorithemForCreate) {
-		this.algorithemForCreate = algorithemForCreate;
+	public String getUc() {
+		return uc;
 	}
 
-	/**
-	 * get the ui
-	 * @return -ui
-	 */
-
-	public String getUi() {
-		return ui;
+	public void setUc(String uc) {
+		this.uc = uc;
 	}
 
-
-	/**
-	 * set the ui
-	 * @param -ui
-	 */
-	public void setUi(String ui) {
-		this.ui = ui;
+	public int getX() {
+		return x;
 	}
 
-
-	/**
-	 * get the x size
-	 * @return int x
-	 */
-	public int getXSize() {
-		return xSize;
-	}
-	/**
-	 * set the x size
-	 * @param int x size
-	 */
-
-	public void setXSize(int xSize) {
-		this.xSize = xSize;
+	public void setX(int x) {
+		this.x = x;
 	}
 
-	/**
-	 * get the y size
-	 * @return int y
-	 */
-	public int getYSize() {
-		return ySize;
+	public int getY() {
+		return y;
 	}
 
-	/**
-	 * set the x size
-	 * @param int x size
-	 */
-	public void setYSize(int ySize) {
-		this.ySize = ySize;
+	public void setY(int y) {
+		this.y = y;
 	}
 
-	/**
-	 * get the z size
-	 * @return int z
-	 */
-	public int getZSize() {
-		return zSize;
-	}
-	/**
-	 * set the x size
-	 * @param int x size
-	 */
-	public void setZSize(int zSize) {
-		this.zSize = zSize;
+	public int getZ() {
+		return z;
 	}
 
-	/**
-	 * get the number of threads
-	 * @return int 
-	 */
+	public void setZ(int z) {
+		this.z = z;
+	}
+
 	public int getNumberOfThreads() {
 		return numberOfThreads;
 	}
-
-	/**
-	 * set the number of threads
-	 * @param int 
-	 */
 
 	public void setNumberOfThreads(int numberOfThreads) {
 		this.numberOfThreads = numberOfThreads;
 	}
 
-
-	/**
-	 * get the algorithm for solution
-	 * @return String
-	 */
-	public String getAlgorithemForSolution() {
-		return algorithemForSolution;
+	public String getName() {
+		return name;
 	}
-	/**
-	 * set the algorithm for solution
-	 * @return String
-	 */
 
-	public void setAlgorithemForSolution(String algorithemForSolution) {
-		this.algorithemForSolution = algorithemForSolution;
-	}
-	/**
-	 * set maze name
-	 * @param String name
-	 */
 	public void setName(String name) {
-		this.name = name;		
+		this.name = name;
 	}
-	/**
-	 * get maze name
-	 * @return String name
-	 */
-	public String getName() { return this.name; }
+
+	public String getAlgorithemForSolution() {
+		return algorithmForSolution;
+	}
+
+	public void setAlgorithemForSolution(String algorithmForSolution) {
+		this.algorithmForSolution = algorithmForSolution;
+	}
+
+	public String getAlgorithemForGenerate() {
+		return algorithmForGenerate;
+	}
+
+	public void setAlgorithemForGenerate(String algorithmForGenerate) {
+		this.algorithmForGenerate = algorithmForGenerate;
+	}
+	
 
 }

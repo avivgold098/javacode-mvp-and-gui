@@ -1,24 +1,27 @@
 package presenter;
-
-public class DisplayCrossSection extends CommonCommand {
-
+/**
+ * extends the CommonComand
+ * manage the display of the cross section by  
+ */
+public class DisplayCrossSection extends CommonCommand{
+	/**
+	 * DisplayCrossSectionBy constructor
+	 * @param controller - set the controller to work with him
+	 */
 	public DisplayCrossSection(Presenter presenter) {
 		super(presenter);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void doCommand(String str) {
-		String[] strings=str.split(" ");
-		if(strings.length!=3)
-			pr.getV().printMessage("invalid input");
+		String[] parm =str.split(" ");
+		if(parm.length != 3)
+			presenter.setMessage("Invalid Command");
 		else
 		{
-			int index=Integer.parseInt(strings[2]);
-			pr.getM().crossBy(strings[1], index, strings[0]);
+		  int index=Integer.parseInt(parm[1]);
+		  presenter.getModel().displayCrossSectionBy(parm[0], index, parm[2]);
 		}
-		
-		
 	}
-
+	
 }

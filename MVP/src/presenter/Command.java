@@ -1,6 +1,12 @@
-package presenter ;
+package presenter;
+/**
+ * interface of all the commands
+ *
+ */
 public interface Command {
-
-	public void doCommand(String str);
-
+	/**
+	 * the command function
+	 * @param str the parameter to the Model function
+	 */
+	void doCommand(String str);
 }
